@@ -1,6 +1,6 @@
 # @logstitch/sdk
 
-TypeScript SDK for [LogStitch](https://logstitch.dev) — enterprise-grade audit logs for your SaaS.
+TypeScript SDK for [LogStitch](https://logstitch.io) — enterprise-grade audit logs for your SaaS.
 
 Zero runtime dependencies. 3.6KB minified. ESM + CJS.
 
@@ -142,7 +142,7 @@ const client = new LogStitch({
   projectKey: 'pk_live_...',
 
   // Optional
-  baseUrl: 'https://logstitch.dev',  // API base URL
+  baseUrl: 'https://logstitch.io',  // API base URL
   batchSize: 10,                      // Events per batch (default: 10)
   flushInterval: 5000,                // Flush timer in ms (default: 5000)
   maxQueueSize: 1000,                 // Max queued events (default: 1000)

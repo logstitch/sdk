@@ -11,7 +11,7 @@ import { LogStitchError } from './errors.js';
 import { fetchWithRetry } from './retry.js';
 import { BatchQueue } from './queue.js';
 
-const DEFAULT_BASE_URL = 'https://logstitch.dev';
+const DEFAULT_BASE_URL = 'https://logstitch.io';
 const DEFAULT_BATCH_SIZE = 10;
 const DEFAULT_FLUSH_INTERVAL = 5_000;
 const DEFAULT_MAX_QUEUE_SIZE = 1_000;

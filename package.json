@@ -1,6 +1,6 @@
 {
   "name": "@logstitch/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TypeScript SDK for LogStitch audit log ingestion and querying",
   "type": "module",
   "main": "dist/index.cjs",
