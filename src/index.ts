@@ -16,3 +16,4 @@ export type {
   ViewerTokenParams,
   ViewerTokenResponse,
 } from './types.js';
+export type { StreamOptions } from './stream.js';

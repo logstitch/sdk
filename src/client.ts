@@ -7,6 +7,7 @@ import type {
   ViewerTokenParams,
   ViewerTokenResponse,
 } from './types.js';
+import type { StreamOptions } from './stream.js';
 import { LogStitchError } from './errors.js';
 import { fetchWithRetry } from './retry.js';
 import { BatchQueue } from './queue.js';
@@ -22,6 +23,8 @@ export class LogStitch {
   private readonly strict: boolean;
   private readonly onError?: (error: Error) => void;
   private readonly queue: BatchQueue;
+  private readonly mode: 'authenticated' | 'stream';
+  private readonly streamToken: string | null;
 
   readonly events: {
     list: (params?: EventListParams) => Promise<EventListResponse>;
@@ -31,8 +34,43 @@ export class LogStitch {
     create: (params: ViewerTokenParams) => Promise<ViewerTokenResponse>;
   };
 
-  constructor(options: LogStitchOptions) {
-    if (!options.projectKey) {
+  /**
+   * Create a stream-mode client for anonymous event ingestion.
+   * No API key or signup required. Events are sent to a claim token endpoint.
+   * Call `client.token` to get the claim token for later account binding.
+   */
+  static stream(options?: StreamOptions): LogStitch {
+    const token = options?.token ?? crypto.randomUUID();
+    const instance = new LogStitch({
+      projectKey: '__stream__',
+      baseUrl: options?.baseUrl,
+      batchSize: options?.batchSize,
+      flushInterval: options?.flushInterval,
+      maxQueueSize: options?.maxQueueSize,
+      strict: options?.strict,
+      onError: options?.onError,
+    }, { mode: 'stream', streamToken: token });
+
+    const baseUrl = (options?.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
+    // eslint-disable-next-line no-console
+    console.log(`LogStitch Stream Mode — Claim at: ${baseUrl}/claim?token=${token}`);
+
+    return instance;
+  }
+
+  /** Get the stream claim token (null in authenticated mode). */
+  get token(): string | null {
+    return this.streamToken;
+  }
+
+  constructor(
+    options: LogStitchOptions,
+    internal?: { mode: 'stream'; streamToken: string },
+  ) {
+    this.mode = internal?.mode ?? 'authenticated';
+    this.streamToken = internal?.streamToken ?? null;
+
+    if (this.mode === 'authenticated' && !options.projectKey) {
       throw new Error('LogStitch: projectKey is required');
     }
 
@@ -48,13 +86,21 @@ export class LogStitch {
       onFlush: (events) => this._send(events),
     });
 
-    this.events = {
-      list: (params) => this._listEvents(params),
-    };
-
-    this.viewerTokens = {
-      create: (params) => this._createViewerToken(params),
-    };
+    if (this.mode === 'stream') {
+      this.events = {
+        list: () => { throw new Error('LogStitch: events.list() is not available in stream mode'); },
+      };
+      this.viewerTokens = {
+        create: () => { throw new Error('LogStitch: viewerTokens.create() is not available in stream mode'); },
+      };
+    } else {
+      this.events = {
+        list: (params) => this._listEvents(params),
+      };
+      this.viewerTokens = {
+        create: (params) => this._createViewerToken(params),
+      };
+    }
   }
 
   async log(event: EventInput): Promise<void> {
@@ -89,14 +135,22 @@ export class LogStitch {
   }
 
   private async _sendAndReturn(events: EventInput[]): Promise<IngestResponse> {
+    const url = this.mode === 'stream'
+      ? `${this.baseUrl}/api/v1/streams/${this.streamToken}/events`
+      : `${this.baseUrl}/api/v1/events`;
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (this.mode === 'authenticated') {
+      headers['Authorization'] = `Bearer ${this.projectKey}`;
+    }
+
     const res = await fetchWithRetry(
-      `${this.baseUrl}/api/v1/events`,
+      url,
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.projectKey}`,
-        },
+        headers,
         body: JSON.stringify(events.length === 1 ? events[0] : events),
       },
     );

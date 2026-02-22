@@ -94,19 +94,43 @@ interface ViewerTokenResponse {
     request_id: string;
 }
 
+interface StreamOptions {
+    /** Existing claim token to resume. If omitted, generates a new UUIDv4. */
+    token?: string;
+    baseUrl?: string;
+    batchSize?: number;
+    flushInterval?: number;
+    maxQueueSize?: number;
+    strict?: boolean;
+    onError?: (error: Error) => void;
+}
+
 declare class LogStitch {
     private readonly baseUrl;
     private readonly projectKey;
     private readonly strict;
     private readonly onError?;
     private readonly queue;
+    private readonly mode;
+    private readonly streamToken;
     readonly events: {
         list: (params?: EventListParams) => Promise<EventListResponse>;
     };
     readonly viewerTokens: {
         create: (params: ViewerTokenParams) => Promise<ViewerTokenResponse>;
     };
-    constructor(options: LogStitchOptions);
+    /**
+     * Create a stream-mode client for anonymous event ingestion.
+     * No API key or signup required. Events are sent to a claim token endpoint.
+     * Call `client.token` to get the claim token for later account binding.
+     */
+    static stream(options?: StreamOptions): LogStitch;
+    /** Get the stream claim token (null in authenticated mode). */
+    get token(): string | null;
+    constructor(options: LogStitchOptions, internal?: {
+        mode: 'stream';
+        streamToken: string;
+    });
     log(event: EventInput): Promise<void>;
     logBatch(events: EventInput[]): Promise<IngestResponse>;
     flush(): Promise<void>;
@@ -126,4 +150,4 @@ declare class LogStitchError extends Error {
     static fromResponse(res: Response): Promise<LogStitchError>;
 }
 
-export { type Actor, type ActorType, type Change, type EventCategory, type EventContext, type EventInput, type EventListParams, type EventListResponse, type EventResponse, type IngestResponse, LogStitch, LogStitchError, type LogStitchOptions, type Target, type ViewerTokenParams, type ViewerTokenResponse };
+export { type Actor, type ActorType, type Change, type EventCategory, type EventContext, type EventInput, type EventListParams, type EventListResponse, type EventResponse, type IngestResponse, LogStitch, LogStitchError, type LogStitchOptions, type StreamOptions, type Target, type ViewerTokenParams, type ViewerTokenResponse };

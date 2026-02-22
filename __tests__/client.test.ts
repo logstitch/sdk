@@ -45,7 +45,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
         batchSize: 2,
         flushInterval: 60_000,
@@ -60,7 +60,7 @@ describe('LogStitch', () => {
       expect(url).toBe('https://api.test/api/v1/events');
       expect(init.method).toBe('POST');
       expect(init.headers).toEqual(
-        expect.objectContaining({ Authorization: 'Bearer pk_live_test' }),
+        expect.objectContaining({ Authorization: 'Bearer pk_test_key_value' }),
       );
     });
 
@@ -76,7 +76,7 @@ describe('LogStitch', () => {
 
       const onError = vi.fn();
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
         batchSize: 1,
         flushInterval: 60_000,
@@ -103,7 +103,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
         strict: true,
       });
@@ -123,7 +123,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
         batchSize: 100, // high batch size so queue wouldn't flush
       });
@@ -149,7 +149,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
       });
 
@@ -170,7 +170,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
       });
 
@@ -200,7 +200,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
       });
 
@@ -231,7 +231,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
       });
 
@@ -251,7 +251,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
       });
 
@@ -270,7 +270,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
         batchSize: 100,
         flushInterval: 60_000,
@@ -289,7 +289,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test',
         batchSize: 100,
         flushInterval: 60_000,
@@ -308,7 +308,7 @@ describe('LogStitch', () => {
       );
 
       const client = new LogStitch({
-        projectKey: 'pk_live_test',
+        projectKey: 'pk_test_key_value',
         baseUrl: 'https://api.test///',
       });
 

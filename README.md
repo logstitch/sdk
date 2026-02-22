@@ -16,7 +16,7 @@ npm install @logstitch/sdk
 import { LogStitch } from '@logstitch/sdk';
 
 const client = new LogStitch({
-  projectKey: 'pk_live_...',
+  projectKey: 'pk_...',
 });
 
 // Send an event (fire-and-forget by default)
@@ -139,7 +139,7 @@ const { token, expires_at } = await client.viewerTokens.create({
 ```typescript
 const client = new LogStitch({
   // Required
-  projectKey: 'pk_live_...',
+  projectKey: 'pk_...',
 
   // Optional
   baseUrl: 'https://logstitch.io',  // API base URL
@@ -179,7 +179,7 @@ Errors from `client.log()` are swallowed. Use `onError` to observe them:
 
 ```typescript
 const client = new LogStitch({
-  projectKey: 'pk_live_...',
+  projectKey: 'pk_...',
   onError: (err) => {
     // Log to your monitoring service
     Sentry.captureException(err);
@@ -195,7 +195,7 @@ Set `strict: true` to throw on any error. Useful for `logBatch()` and direct API
 import { LogStitch, LogStitchError } from '@logstitch/sdk';
 
 const client = new LogStitch({
-  projectKey: 'pk_live_...',
+  projectKey: 'pk_...',
   strict: true,
 });
 
